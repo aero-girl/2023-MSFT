@@ -1,26 +1,31 @@
 # Project Title
-
-A brief description of your project.
+Chat to your enterprise data
 
 ## Table of Contents
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Installation
 
-Instructions on how to install and set up your project.
+# Create virtual environment
+python -m venv .venv  
+
+# Activate virtual environment
+.\.venv\Scripts\activate   
+
+Step 1
+# Activate virtual environment
+.\.venv\Scripts\activate  
+
+Step 2
+# install requirements
+pip install -r .\requirements.txt
+
 
 ## Usage
+Step 3
+# run stremalit
+streamlit run .\AOIsum_app.py
 
-Instructions on how to use your project and any relevant examples.
 
-## Contributing
-
-Guidelines on how others can contribute to your project.
-
-## License
-
-Information about the license under which your project is distributed.
