@@ -8,24 +8,21 @@ Chat to your enterprise data
 
 ## Installation
 
-# Create virtual environment
+### Step 1
+#### Create virtual environment
 python -m venv .venv  
 
-# Activate virtual environment
+### Step 2
+#### Activate virtual environment
 .\.venv\Scripts\activate   
 
-Step 1
-# Activate virtual environment
-.\.venv\Scripts\activate  
-
-Step 2
-# install requirements
+### Step 3
+##### install requirements
 pip install -r .\requirements.txt
 
-
-## Usage
-Step 3
-# run stremalit
+### Usage
+### Step 3
+##### run stremalit
 streamlit run .\AOIsum_app.py
 
 
