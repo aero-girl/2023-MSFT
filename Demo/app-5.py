@@ -1,28 +1,26 @@
 from dotenv import load_dotenv
 import os
 import streamlit as st
+import openai
 from PyPDF2 import PdfReader #  import pdf reader
 from langchain.text_splitter import CharacterTextSplitter # import text splitter
 
-# Use function from langchain to split the text into chunks
-
-
 def main():
     load_dotenv()
-    # print(os.getenv("OPENAI_API_TYPE"))
-    # print(os.getenv("OPENAI_API_VERSION"))
-    # print(os.getenv("OPENAI_API_BASE"))
-    # print(os.getenv("OPENAI_API_KEY"))
+    # Get API key from environment variable
+    openai.api_key = os.getenv("OPENAI_API_KEY") 
+    openai.api_base = os.getenv("OPENAI_API_BASE") 
+    openai.api_type = os.getenv("OPENAI_API_TYPE")
+    openai.api_version = os.getenv("OPENAI_API_VERSION")
 
     st.set_page_config(
-        page_title="Langchain Demo",
-        page_icon="🔗",
+        page_title="Chat 💬 with your PDF 📄",
+        page_icon="🤖",
         layout="centered",
         initial_sidebar_state="auto",
     )
-    st.header("Talk to your PDF 💬")
 
-    # Upload PDF file
+    st.header("Talk to your PDF 💬")
     pdf = st.file_uploader("Upload PDF 📑")
 
     # check if user has uploaded a file

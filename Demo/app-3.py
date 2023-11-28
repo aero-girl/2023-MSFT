@@ -9,7 +9,7 @@ import streamlit as st
 def main():
     load_dotenv()
 
-     # Get API key from environment variable
+    # Get API key from environment variable
     openai.api_key = os.getenv("OPENAI_API_KEY") 
     openai.api_base = os.getenv("OPENAI_API_BASE") 
     openai.api_type = os.getenv("OPENAI_API_TYPE")
