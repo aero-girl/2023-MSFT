@@ -19,9 +19,6 @@ def main():
     openai.api_type = os.getenv("OPENAI_API_TYPE")
     openai.api_version = os.getenv("OPENAI_API_VERSION")
 
-    print(f"OPENAI_API_KEY:{openai.api_key}") # print OpenAI API key
-
-
     st.set_page_config(
     page_title="Chat 💬 with your PDF 📄",
     page_icon="🤖",
@@ -67,31 +64,8 @@ def main():
         with st.spinner("It's indexing..."):
             #  Create a knowledge base using FAISS from the given chunks and embeddings
             vectorstore = FAISS.from_texts(texts=chunks, embedding=embeddings)
-        st.success("Embeddings done.", icon="✅")
+        st.success("Done", icon="✅")
 
-        # # get user question
-        # question = st.text_input("Ask your question here:") # get user question
-
-        # if question: # if user question is not empty
-        #     # search for similar documents
-        #     docs_db = vectorstore.similarity_search(question)
-            
-        #     # Define the LLM model
-        #     llm = AzureOpenAI(deployment_name=completion_model, 
-        #                       model_name=completion_model,
-        #                       temperature=0.5,
-        #                       max_tokens=2000) 
-        #     chain = load_qa_chain(llm, chain_type="stuff")
-
-        #     # Send the question and the documents to the LLM model
-        #     response = chain({"input_documents": docs_db,
-        #                       "question": question,
-        #                       "language": "English",
-        #                       "existing_answer" : ""},
-        #                       return_only_outputs=True)
-            
-        #     with st.spinner("It's thinking..."):
-        #         st.write(response) # display the response on the streamlit app
        
 if __name__ == '__main__':
     main()
