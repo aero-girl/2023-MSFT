@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
-import os
 import openai
-
+import os
 
 import streamlit as st
 from PyPDF2 import PdfReader #  import pdf reader
@@ -9,31 +8,27 @@ from langchain.text_splitter import CharacterTextSplitter # import text splitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 
-from langchain.document_loaders import PyPDFLoader
+# from langchain.document_loaders import PyPDFLoader
 
-# Use function from langchain to split the text into chunks
+from langchain.llms import AzureOpenAI
+from langchain.chains.question_answering import load_qa_chain
 
+
+# load_dotenv('.env')
 
 def main():
     load_dotenv()
-    # print(os.getenv("OPENAI_API_TYPE"))
-    # print(os.getenv("OPENAI_API_VERSION"))
-    # print(os.getenv("OPENAI_API_BASE"))
-    # print(os.getenv("OPENAI_API_KEY"))
 
    # Configure Azure OpenAI Service API
-    # os.environ["OPENAI_API_TYPE"] = os.getenv("OPENAI_API_TYPE")
-    # os.environ["OPENAI_API_VERSION"] = os.getenv("OPENAI_API_VERSION")
-    # os.environ["OPENAI_API_BASE"] = os.getenv("OPENAI_API_BASE")
-    # os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-    # OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     openai.api_key = os.getenv("OPENAI_API_KEY") # set OpenAI API key
-    print(f"OPENAI_API_KEY:{openai.api_key}") # print OpenAI API key
+    # print(f"OPENAI_API_KEY:{openai.api_key}") # print OpenAI API key
     openai.api_base = os.getenv("OPENAI_API_BASE") # set OpenAI Base URL
-    print(f"OPENAI_API_BASE:{openai.api_base}") # print OpenAI Base URL
-
+    # print(f"OPENAI_API_BASE:{openai.api_base}") # print OpenAI Base URL
+    
     openai.api_type = os.getenv("OPENAI_API_TYPE")
     openai.api_version = os.getenv("OPENAI_API_VERSION")
+    # print(f"OPENAI_API_VERSION:{openai.api_version}") # print OpenAI Base URL
+
 
     st.set_page_config(
         page_title="Chat 💬 with your PDF 📄",
@@ -46,12 +41,7 @@ def main():
     # Upload PDF file
     pdf = st.file_uploader("Upload PDF 📑")
 
-    # loader = PyPDFLoader(pdf)  
-    # pages = loader.load_and_split()
-    # st.write(pages)
-
-
-    # check if user has uploaded a file
+     # check if user has uploaded a file
     # extract the text from the pdf file
     if pdf is not None:
         pdf_reader = PdfReader(pdf)
@@ -74,7 +64,7 @@ def main():
 
     #     # Define models
         model = "text-embedding-ada-002"
-        completion_model = "gpt-35-turbo"
+        completion_model = "text-davinci-003"
 
         # Create embeddings
         embeddings = OpenAIEmbeddings(model=model,
@@ -82,24 +72,35 @@ def main():
                                       openai_api_key= openai.api_key, 
                                       chunk_size=1)
         st.write("Embeddings created")
-        st.write("Creating query result")  
 
-        # # Create a knowledge base using FAISS from the given chunks and embeddings
-        vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
+        with st.spinner("It's indexing..."):
+            #  Create a knowledge base using FAISS from the given chunks and embeddings
+            vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
+        st.success("Embeddings done.", icon="✅")
 
+        # get user question
+        question = st.text_input("Ask your question here:") # get user question
 
+        if question: # if user question is not empty
+            # search for similar documents
+            docs_db = vectorstore.similarity_search(question)
+            
+            # Define the LLM model
+            llm = AzureOpenAI(deployment_name=completion_model, 
+                              model_name=completion_model,
+                              temperature=0.5,
+                              max_tokens=2000) 
+            chain = load_qa_chain(llm, chain_type="stuff")
 
-   
-
-
-
-
-
-
+            # Send the question and the documents to the LLM model
+            response = chain({"input_documents": docs_db,
+                              "question": question,
+                              "language": "English",
+                              "existing_answer" : ""},
+                              return_only_outputs=True)
+            
+            with st.spinner("It's thinking..."):
+                st.write(response) # display the response on the streamlit app
        
-
-        # # Create a knowledge base using FAISS from the given chunks and embeddings  
-        # knowledge_base = FAISS.from_texts(chunks, embeddings)
-
 if __name__ == '__main__':
     main()
